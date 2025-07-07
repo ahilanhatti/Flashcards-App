@@ -1,5 +1,3 @@
-# flashcards.py
-
 import json
 import os
 import random
@@ -24,13 +22,40 @@ def show_menu():
     print("1. Add a flashcard")
     print("2. Review flashcards")
     print("3. Take a quiz")
-    print("4. Quit")
+    print("4. Show categories")
+    print("5. Quit")
+
+def get_categories(flashcards):
+    return sorted(set(card["category"] for card in flashcards))
+
+def choose_category(flashcards):
+    categories = get_categories(flashcards)
+    if not categories:
+        print("No categories available.")
+        return None
+
+    print("\nAvailable categories:")
+    for i, cat in enumerate(categories, 1):
+        print(f"{i}. {cat}")
+    print(f"{len(categories)+1}. All categories")
+
+    while True:
+        choice = input("Choose a category (number): ").strip()
+        if choice.isdigit():
+            choice = int(choice)
+            if 1 <= choice <= len(categories):
+                return categories[choice - 1]
+            elif choice == len(categories) + 1:
+                return None
+        print("Invalid selection. Try again.")
 
 def add_flashcard(flashcards):
     question = input("Enter the question: ").strip()
     answer = input("Enter the answer: ").strip()
-    if not question or not answer:
-        print("Both question and answer are required.")
+    category = input("Enter a category (e.g., math, history): ").strip()
+
+    if not question or not answer or not category:
+        print("All fields are required.")
         return
 
     for card in flashcards:
@@ -38,7 +63,7 @@ def add_flashcard(flashcards):
             print("This question already exists. Skipping.")
             return
 
-    flashcards.append({"question": question, "answer": answer})
+    flashcards.append({"question": question, "answer": answer, "category": category})
     save_flashcards(flashcards)
     print("Flashcard added and saved!")
 
@@ -47,7 +72,14 @@ def review_flashcards(flashcards):
         print("No flashcards to review.")
         return
 
-    for i, card in enumerate(flashcards, 1):
+    category = choose_category(flashcards)
+    cards = [card for card in flashcards if category is None or card["category"] == category]
+
+    if not cards:
+        print("No flashcards found in this category.")
+        return
+
+    for i, card in enumerate(cards, 1):
         input(f"\nCard {i}: {card['question']} (press Enter to show answer)")
         print(f"Answer: {card['answer']}")
 
@@ -56,11 +88,17 @@ def take_quiz(flashcards):
         print("No flashcards available to quiz.")
         return
 
+    category = choose_category(flashcards)
+    cards = [card for card in flashcards if category is None or card["category"] == category]
+
+    if not cards:
+        print("No flashcards found in this category.")
+        return
+
     print("\nStarting quiz! Type your answers and press Enter.\n")
     score = 0
     missed_cards = []
 
-    cards = flashcards.copy()
     random.shuffle(cards)
 
     for i, card in enumerate(cards, 1):
@@ -78,7 +116,7 @@ def take_quiz(flashcards):
     print(f"Quiz complete! You scored {score}/{len(cards)} ({(score/len(cards)) * 100:.1f}%).")
 
     if missed_cards:
-        retry = input("Would you like to retry the missed questions? (y/n): ").strip().lower()
+        retry = input("Retry missed questions? (y/n): ").strip().lower()
         if retry == "y":
             take_quiz(missed_cards)
 
@@ -96,6 +134,14 @@ def main():
         elif choice == "3":
             take_quiz(flashcards)
         elif choice == "4":
+            categories = get_categories(flashcards)
+            if categories:
+                print("\nAvailable categories:")
+                for cat in categories:
+                    print(f"- {cat}")
+            else:
+                print("No categories defined yet.")
+        elif choice == "5":
             print("Saving and exiting. Goodbye!")
             save_flashcards(flashcards)
             break

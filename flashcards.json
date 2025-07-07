@@ -1,6 +1,22 @@
 [
   {
     "question": "what season is it",
-    "answer": "summer"
+    "answer": "summer",
+    "category": "general knowledge"
+  },
+  {
+    "question": "what's two plus two",
+    "answer": "4",
+    "category": "general knowledge"
+  },
+  {
+    "question": "lkjlkj",
+    "answer": "kjhkjh",
+    "category": "random"
+  },
+  {
+    "question": "What is the price of tea in China  yesterday?",
+    "answer": "400 yuan",
+    "category": "estimation"
   }
 ]
