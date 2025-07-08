@@ -2,16 +2,22 @@
   {
     "question": "What is the next season?",
     "answer": "fall",
-    "category": "general knowledge"
+    "category": "general knowledge",
+    "reviewed": 2,
+    "correct": 2
   },
   {
     "question": "lkjlkj",
     "answer": "kjhkjh",
-    "category": "random"
+    "category": "random",
+    "reviewed": 0,
+    "correct": 0
   },
   {
     "question": "What is the price of tea in China  yesterday?",
     "answer": "400 yuan",
-    "category": "estimation"
+    "category": "estimation",
+    "reviewed": 0,
+    "correct": 0
   }
 ]

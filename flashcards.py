@@ -1,5 +1,5 @@
-# Full implementation of Flashcard Quiz App - Phase 5
-# Includes adding, reviewing, quizzing, categorization, and flashcard management (edit/delete)
+# Full implementation of Flashcard Quiz App - Phase 6
+# Includes performance tracking (reviewed count, correct count, accuracy-based sorting)
 
 import json
 import os
@@ -11,7 +11,11 @@ def load_flashcards():
     if os.path.exists(FLASHCARD_FILE):
         try:
             with open(FLASHCARD_FILE, "r") as f:
-                return json.load(f)
+                flashcards = json.load(f)
+                for card in flashcards:
+                    card.setdefault("reviewed", 0)
+                    card.setdefault("correct", 0)
+                return flashcards
         except json.JSONDecodeError:
             print("Warning: flashcards.json is corrupted. Starting with empty set.")
     return []
@@ -67,7 +71,13 @@ def add_flashcard(flashcards):
             print("This question already exists. Skipping.")
             return
 
-    flashcards.append({"question": question, "answer": answer, "category": category})
+    flashcards.append({
+        "question": question,
+        "answer": answer,
+        "category": category,
+        "reviewed": 0,
+        "correct": 0
+    })
     save_flashcards(flashcards)
     print("Flashcard added and saved!")
 
@@ -103,21 +113,25 @@ def take_quiz(flashcards):
     score = 0
     missed_cards = []
 
-    random.shuffle(cards)
+    cards.sort(key=lambda c: (c["correct"] / c["reviewed"]) if c["reviewed"] else 0)
 
     for i, card in enumerate(cards, 1):
         print(f"Question {i}: {card['question']}")
         user_answer = input("Your answer: ").strip().lower()
         correct_answer = card["answer"].strip().lower()
 
+        card["reviewed"] += 1
+
         if user_answer == correct_answer:
             print("✅ Correct!\n")
             score += 1
+            card["correct"] += 1
         else:
             print(f"❌ Incorrect. The correct answer was: {card['answer']}\n")
             missed_cards.append(card)
 
     print(f"Quiz complete! You scored {score}/{len(cards)} ({(score/len(cards)) * 100:.1f}%).")
+    save_flashcards(flashcards)
 
     if missed_cards:
         retry = input("Retry missed questions? (y/n): ").strip().lower()
@@ -131,7 +145,11 @@ def manage_flashcards(flashcards):
 
     print("\nFlashcards:")
     for i, card in enumerate(flashcards, 1):
-        print(f"{i}. [{card['category']}] {card['question']}")
+        if card["reviewed"]:
+            accuracy = f"{(card['correct'] / card['reviewed']) * 100:.0f}%"
+        else:
+            accuracy = "N/A"
+        print(f"{i}. [{card['category']}] {card['question']} (Accuracy: {accuracy})")
 
     try:
         choice = int(input("Select a flashcard to manage (0 to cancel): "))
@@ -150,6 +168,7 @@ def manage_single_card(flashcards, index):
     print(f"Q: {card['question']}")
     print(f"A: {card['answer']}")
     print(f"Category: {card['category']}")
+    print(f"Reviewed: {card['reviewed']}, Correct: {card['correct']}")
     print("1. Edit")
     print("2. Delete")
     print("3. Cancel")
