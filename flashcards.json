@@ -1,12 +1,7 @@
 [
   {
-    "question": "what season is it",
-    "answer": "summer",
-    "category": "general knowledge"
-  },
-  {
-    "question": "what's two plus two",
-    "answer": "4",
+    "question": "What is the next season?",
+    "answer": "fall",
     "category": "general knowledge"
   },
   {
