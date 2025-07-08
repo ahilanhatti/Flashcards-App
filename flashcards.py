@@ -1,3 +1,6 @@
+# Full implementation of Flashcard Quiz App - Phase 5
+# Includes adding, reviewing, quizzing, categorization, and flashcard management (edit/delete)
+
 import json
 import os
 import random
@@ -23,7 +26,8 @@ def show_menu():
     print("2. Review flashcards")
     print("3. Take a quiz")
     print("4. Show categories")
-    print("5. Quit")
+    print("5. Manage flashcards")
+    print("6. Quit")
 
 def get_categories(flashcards):
     return sorted(set(card["category"] for card in flashcards))
@@ -120,6 +124,63 @@ def take_quiz(flashcards):
         if retry == "y":
             take_quiz(missed_cards)
 
+def manage_flashcards(flashcards):
+    if not flashcards:
+        print("No flashcards to manage.")
+        return
+
+    print("\nFlashcards:")
+    for i, card in enumerate(flashcards, 1):
+        print(f"{i}. [{card['category']}] {card['question']}")
+
+    try:
+        choice = int(input("Select a flashcard to manage (0 to cancel): "))
+        if choice == 0:
+            return
+        if 1 <= choice <= len(flashcards):
+            manage_single_card(flashcards, choice - 1)
+        else:
+            print("Invalid number.")
+    except ValueError:
+        print("Please enter a valid number.")
+
+def manage_single_card(flashcards, index):
+    card = flashcards[index]
+    print(f"\nSelected Flashcard:")
+    print(f"Q: {card['question']}")
+    print(f"A: {card['answer']}")
+    print(f"Category: {card['category']}")
+    print("1. Edit")
+    print("2. Delete")
+    print("3. Cancel")
+
+    choice = input("Choose an option: ").strip()
+    if choice == "1":
+        edit_flashcard(card)
+        save_flashcards(flashcards)
+        print("Flashcard updated.")
+    elif choice == "2":
+        confirm = input("Are you sure you want to delete this flashcard? (y/n): ").strip().lower()
+        if confirm == "y":
+            del flashcards[index]
+            save_flashcards(flashcards)
+            print("Flashcard deleted.")
+    else:
+        print("Canceled.")
+
+def edit_flashcard(card):
+    print("Leave a field blank to keep current value.")
+    new_question = input("New question: ").strip()
+    new_answer = input("New answer: ").strip()
+    new_category = input("New category: ").strip()
+
+    if new_question:
+        card["question"] = new_question
+    if new_answer:
+        card["answer"] = new_answer
+    if new_category:
+        card["category"] = new_category
+
 def main():
     flashcards = load_flashcards()
 
@@ -142,6 +203,8 @@ def main():
             else:
                 print("No categories defined yet.")
         elif choice == "5":
+            manage_flashcards(flashcards)
+        elif choice == "6":
             print("Saving and exiting. Goodbye!")
             save_flashcards(flashcards)
             break
