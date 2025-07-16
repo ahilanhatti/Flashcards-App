@@ -114,6 +114,14 @@ def take_quiz(flashcards):
     missed_cards = []
 
     cards.sort(key=lambda c: (c["correct"] / c["reviewed"]) if c["reviewed"] else 0)
+    # this lambda function is equivalent to:
+    # def proportion_correct( c ):    # c is a dictionary representing one flashcard
+    #     if c["reviewed"] != 0:
+    #         return c["correct"] / c["reviewed"]
+    #     else:
+    #         return 0
+    # then you would call:
+    # cards.sort(key=proportion_correct)
 
     for i, card in enumerate(cards, 1):
         print(f"Question {i}: {card['question']}")
