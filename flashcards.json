@@ -3,20 +3,27 @@
     "question": "What is the next season?",
     "answer": "fall",
     "category": "general knowledge",
-    "reviewed": 2,
-    "correct": 2
+    "reviewed": 3,
+    "correct": 3
   },
   {
     "question": "lkjlkj",
     "answer": "kjhkjh",
     "category": "random",
-    "reviewed": 0,
+    "reviewed": 2,
     "correct": 0
   },
   {
     "question": "What is the price of tea in China  yesterday?",
     "answer": "400 yuan",
     "category": "estimation",
+    "reviewed": 1,
+    "correct": 0
+  },
+  {
+    "question": "what planet are we on",
+    "answer": "Earth",
+    "category": "general knowledge",
     "reviewed": 0,
     "correct": 0
   }
